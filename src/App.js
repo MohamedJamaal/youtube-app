@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import { Container } from 'react-bootstrap';
+import './_app.scss';
+import Header from './components/header/Header';
+import HomeScreen from './screens/homeScreens/HomeScreen';
+import { useState } from 'react';
+import Sidebar from './components/sidebar/Sidebar';
+import LoginScreen from './components/loginScreen/LoginScreen';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-function App() {
+const Layout = ({ children }) => {
+  const [sidebar, toggleSidebar] = useState(false);
+
+  const handleToggleSidebar = () => toggleSidebar((value) => !value);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header handleToggleSidebar={handleToggleSidebar} />
+      <div className="app__container ">
+        <Sidebar handleToggleSidebar={handleToggleSidebar} sidebar={sidebar} />
+        <Container fluid className="app__main">
+          {children}
+        </Container>
+      </div>
+    </>
   );
-}
+};
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route
+          exact
+          path="/"
+          element={
+            <Layout>
+              <HomeScreen />
+            </Layout>
+          }
+        ></Route>
+        <Route path="/auth" element={<LoginScreen />}></Route>
+        <Route
+          path="/search"
+          element={
+            <Layout>
+              <h1>Modify my element</h1>
+            </Layout>
+          }
+        ></Route>
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
