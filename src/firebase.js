@@ -1,4 +1,8 @@
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+// import firebase from 'firebase';
+
+// import 'firebase/auth'; // for mail config
 
 const firebaseConfig = {
   apiKey: 'AIzaSyC8O685PeRJayf2k-r3veKBsEhkJUmFGWo',
@@ -10,3 +14,5 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
+export default firebase.auth();
