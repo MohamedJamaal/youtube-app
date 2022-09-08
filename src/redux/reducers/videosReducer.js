@@ -8,6 +8,7 @@ const initialState = {
   videos: [],
   loading: false,
   nextPageToken: null,
+  activeCategory: 'All'
 };
 
 export const homeVideosReducer = (state = initialState, action) => {
@@ -18,6 +19,7 @@ export const homeVideosReducer = (state = initialState, action) => {
         videos: action.payload.videos,
         loading: false,
         nextPageToken: action.payload.nextPageToken,
+        activeCategory: action.payload.category
       };
     case HOME_VIDEOS_FAIL:
       return {
