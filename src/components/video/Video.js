@@ -1,31 +1,97 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './_video.scss';
 import { AiFillEye } from 'react-icons/ai';
+import request from '../../api';
+import moment from 'moment';
+import numeral from 'numeral';
 
-function Video() {
+function Video({ video }) {
+  const {
+    id,
+    snippet: {
+      channelId,
+      channelTitle,
+      title,
+      publishedAt,
+      thumbnails: { medium },
+    },
+    contentDetails,
+  } = video;
+
+  const [views, setViews] = useState(null);
+  const [duration, setDuration] = useState(null);
+  const [channelIcon, setChannelIcon] = useState(null);
+
+  const seconds = moment.duration(duration).asSeconds();
+  const _duration = moment.utc(seconds * 1000).format('mm:ss');
+
+  const _videoId = id?.videoId || contentDetails?.videoId || id;
+
+  // get video details
+  useEffect(() => {
+    const get_video_details = async () => {
+      const {
+        data: { items },
+      } = await request('/videos', {
+        params: {
+          part: 'contentDetails,statistics',
+          id: _videoId,
+        },
+      });
+      setDuration(items[0].contentDetails.duration);
+      setViews(items[0].statistics.viewCount);
+    };
+    get_video_details();
+  }, [_videoId]);
+
+  // get channel icon
+  // useEffect(() => {
+  //   const get_channel_icon = async () => {
+  //     const {
+  //       data: { items },
+  //     } = await request('/channels', {
+  //       params: {
+  //         part: 'snippet',
+  //         id: channelId,
+  //       },
+  //     });
+  //     setChannelIcon(items[0].snippet.thumbnails.default);
+  //   };
+  //   get_channel_icon();
+  // }, [channelId]);
+
+  useEffect(() => {
+    const get_channel_icon = async () => {
+      const {
+        data: { items },
+      } = await request('/channels', {
+        params: {
+          part: 'snippet',
+          id: channelId,
+        },
+      });
+      setChannelIcon(items[0].snippet.thumbnails.default);
+    };
+    get_channel_icon();
+  }, [channelId]);
+
   return (
     <div className="video">
       <div className="video__top">
-        <img
-          src="	https://i.ytimg.com/vi/dk6PMt9QsjU/hq720.jpg?sqp=-…AFwAcABBg==&rs=AOn4CLApf6T-fR-XkUHNBy7CJ1MGpiHSWw"
-          alt=""
-        />
-        <span>05:43</span>
+        <img src={medium.url} alt="" />
+        <span>{_duration}</span>
       </div>
 
-      <div className="video__title">Create App in 5 min made by Mohamed</div>
+      <div className="video__title">{title}</div>
       <div className="video__details">
         <span>
-          <AiFillEye /> 5m views •
+          <AiFillEye /> {numeral(views).format('0.a')} views •
         </span>
-        <span>5 days ago</span>
+        <span>{moment(publishedAt).format()}</span>
       </div>
       <div className="video__channel">
-        <img
-          src="	https://yt3.ggpht.com/ytc/AMLnZu_BbFBgOXOLYcY994jDQ-LXbeH3rVv_mW9LeSmljA=s68-c-k-c0x00ffffff-no-rj"
-          alt=""
-        />
-        <p>Mohamed Gamal</p>
+        <img src={channelIcon?.url} alt="" />
+        <p>{channelTitle}</p>
       </div>
     </div>
   );
