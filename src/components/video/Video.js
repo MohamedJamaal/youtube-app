@@ -3,6 +3,7 @@ import './_video.scss';
 import { AiFillEye } from 'react-icons/ai';
 import request from '../../api';
 import moment from 'moment';
+import { LazyLoadImage } from 'react-lazy-load-image-component'
 import numeral from 'numeral';
 
 function Video({ video }) {
@@ -25,7 +26,7 @@ function Video({ video }) {
   const seconds = moment.duration(duration).asSeconds();
   const _duration = moment.utc(seconds * 1000).format('mm:ss');
 
-  const _videoId = id?.videoId || contentDetails?.videoId || id;
+  const _videoId = id ?.videoId || contentDetails ?.videoId || id;
 
   // get video details
   useEffect(() => {
@@ -78,8 +79,9 @@ function Video({ video }) {
   return (
     <div className="video">
       <div className="video__top">
-        <img src={medium.url} alt="" />
-        <span>{_duration}</span>
+        {/* <img src={medium.url} alt="" /> */}
+        <LazyLoadImage src={medium.url} effect='blur' />
+        <span className="video__top__duration">{_duration}</span>
       </div>
 
       <div className="video__title">{title}</div>
@@ -90,7 +92,8 @@ function Video({ video }) {
         <span>{moment(publishedAt).format()}</span>
       </div>
       <div className="video__channel">
-        <img src={channelIcon?.url} alt="" />
+        {/* <img src={channelIcon ?.url} alt="" /> */}
+        <LazyLoadImage src={channelIcon ?.url} effect='blur' />
         <p>{channelTitle}</p>
       </div>
     </div>

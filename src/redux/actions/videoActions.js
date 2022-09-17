@@ -5,7 +5,7 @@ import {
   HOME_VIDEOS_SUCCESS,
 } from '../actionTypes';
 
-export const getPopularVideos = () => async (dispatch) => {
+export const getPopularVideos = () => async (dispatch, getState) => {
   try {
     dispatch({
       type: HOME_VIDEOS_REQUEST,
@@ -14,9 +14,9 @@ export const getPopularVideos = () => async (dispatch) => {
       params: {
         part: 'snippet,contentDetails,statistics',
         chart: 'mostPopular',
-        regionCode: 'IN',
+        regionCode: 'US',
         maxResults: 20,
-        pageToken: '',
+        pageToken: getState().homeVideos.nextPageToken,
       },
     });
 
